@@ -1,0 +1,6 @@
+com\company\singleresp\User.class
+com\company\singleresp\UserPersistenceService.class
+com\company\singleresp\Main.class
+com\company\singleresp\Store.class
+com\company\singleresp\UserValidator.class
+com\company\singleresp\UserController.class
