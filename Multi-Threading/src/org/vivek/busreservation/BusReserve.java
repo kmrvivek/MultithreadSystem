@@ -109,14 +109,6 @@ public class BusReserve implements Runnable {
     
 	@Override
 	public void run() {	 
-		if(bus == null) {
-		try {
-			Thread.currentThread().wait(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
 			
 		 		bus.displaySeats();
 			 	int maxSeatCount = 0;
@@ -124,11 +116,13 @@ public class BusReserve implements Runnable {
 		 		
 		 			System.out.println(Thread.currentThread().getName()+" booking started for "+bus.getName());
 					int seatNumber = determineSeatNumber(this.bus.getChoice());
+					while(maxSeatCount < 4) {
 					if(seatNumber != -1) {
 						 printBoardingPass(seatNumber);
 					}
-				
-				  //System.out.println("Maximum 4 seats booked");
+					maxSeatCount++;
+				  System.out.println("Maximum 4 seats booked");
+					}
 		 			
 	 	
 	}
