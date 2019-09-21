@@ -109,14 +109,6 @@ public class BusReserve implements Runnable {
     
 	@Override
 	public void run() {	 
-		if(bus == null) {
-		try {
-			Thread.currentThread().wait(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
 			
 		 		bus.displaySeats();
 			 	int maxSeatCount = 0;
