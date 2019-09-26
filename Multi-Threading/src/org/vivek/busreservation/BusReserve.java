@@ -17,13 +17,13 @@ public class BusReserve implements Runnable {
     }
     */
     
-    private int determineSeatNumber(int choice) {
+    private static synchronized int determineSeatNumber(int choice, IBus bus1) {
     	 
     	switch(choice) {
     		case 1: 
-    			int seatNumber = bookWindow();
+    			int seatNumber = bookWindow(bus1);
     			if(seatNumber == -1) {
-    				seatNumber = bookAisle();
+    				seatNumber = bookAisle(bus1);
     				if(seatNumber != -1) {
     					System.out.println("No Window seat available, aisle seat is available");
     					return seatNumber;
@@ -32,20 +32,20 @@ public class BusReserve implements Runnable {
                           return -1;
     				}
     			} 
-    			System.out.println("Window seat booked."+bus.getName());
+    			System.out.println("Window seat booked."+bus1.getName());
                 return seatNumber;
     		
     		
     		case 2: 
-    			 seatNumber = bookAisle();
+    			 seatNumber = bookAisle(bus1);
     			  if (seatNumber == -1) { // no aisle seat
-                      seatNumber = bookWindow();
+                      seatNumber = bookWindow(bus1);
                       if (seatNumber != -1) { // window seat available
                           System.out.println("No aisle seat but window seat.");
                           return seatNumber;
                       }
                       else {
-                          System.out.println("No window or aisle seats."+bus.getName());
+                          System.out.println("No window or aisle seats."+bus1.getName());
                           return -1;
                       }
                   }
@@ -58,19 +58,12 @@ public class BusReserve implements Runnable {
     }
     
    
-    private synchronized int bookWindow() {  
+    private static synchronized int bookWindow(IBus bus1) {  
     	
         int seatNumber = -1;       
-        if(bus == null) {
-        	try {
-				Thread.currentThread().wait(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
-        for (int i=0; i <= bus.getSeats().size(); i++) {
-            Seat s = bus.getSeats().get(i);
+      
+        for (int i=0; i <= bus1.getSeats().size(); i++) {
+            Seat s = bus1.getSeats().get(i);
             // check if each seat is available and seat type is window
             if (s.getAvailable() && s.getSeatType() == 1) {
                 s.setAvailable(false);
@@ -82,19 +75,12 @@ public class BusReserve implements Runnable {
     }
     
  
-    private synchronized int bookAisle() {
+    private static synchronized int bookAisle(IBus bus1) {
     	
         int seatNumber = -1;
-        if(bus == null) {
-        	try {
-				Thread.currentThread().wait(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
-        for (int i=0; i <= bus.getSeats().size(); i++) {
-            Seat s = bus.getSeats().get(i);
+     
+        for (int i=0; i <= bus1.getSeats().size(); i++) {
+            Seat s = bus1.getSeats().get(i);
             // check if each seat is available and seat type is aisle
             if (s.getAvailable() && s.getSeatType() == 2) {
                 s.setAvailable(false);
@@ -109,27 +95,27 @@ public class BusReserve implements Runnable {
     
 	@Override
 	public void run() {	 
-			
+			synchronized (bus) {				
 		 		bus.displaySeats();
 			 	int maxSeatCount = 0;
 			 	System.out.println(Thread.currentThread().getName()+" acquired lock on the booking for "+bus.getName());
 		 		
 		 			System.out.println(Thread.currentThread().getName()+" booking started for "+bus.getName());
-					int seatNumber = determineSeatNumber(this.bus.getChoice());
+					int seatNumber = determineSeatNumber(bus.getChoice(), bus);
 					while(maxSeatCount < 4) {
 					if(seatNumber != -1) {
-						 printBoardingPass(seatNumber);
+						 printBoardingPass(seatNumber, bus);
 					}
 					maxSeatCount++;
 				  System.out.println("Maximum 4 seats booked");
 					}
 		 			
-	 	
+			}
 	}
 	
-	 private void printBoardingPass(int seatNumber) {
+	 private static synchronized void printBoardingPass(int seatNumber, IBus bus1) {
 	        System.out.println("\nDate: " + new Date());
-	        Seat s = this.bus.getSeats().get(seatNumber);
+	        Seat s = bus1.getSeats().get(seatNumber);
 	        String type = "";
 	        switch (s.getSeatType()) {
 	            case 1: {
@@ -142,7 +128,7 @@ public class BusReserve implements Runnable {
 	            }
 	        }
 	        System.out.println(Thread.currentThread().getName()+" Boarding pass for " + type + " seat number: "
-	                + seatNumber + " And Bus is "+this.bus.getName()+"\n");
+	                + seatNumber + " And Bus is "+bus1.getName()+"\n");
 	    }
 	 
 }
