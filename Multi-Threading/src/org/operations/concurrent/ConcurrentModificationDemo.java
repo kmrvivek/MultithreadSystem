@@ -41,7 +41,7 @@ public class ConcurrentModificationDemo implements Runnable{
 	public void run() {
 	
 		try {
-			Thread.sleep(10);
+			Thread.sleep(100);
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 		}

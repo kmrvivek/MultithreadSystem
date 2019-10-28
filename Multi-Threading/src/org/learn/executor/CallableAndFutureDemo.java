@@ -45,7 +45,7 @@ class MyFactorial implements Callable<Long> {
 		long result = 1;
 		while(num > 0) {
 			result = result *  num--;
-			Thread.sleep(100);
+			Thread.sleep(200);
 		}
 		return result;
 	}
